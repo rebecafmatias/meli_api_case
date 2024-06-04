@@ -8,16 +8,6 @@ def request_api(produto):
 
 data = request_api("cofre")
 
-# def list_keys(json_data):
-#     results = json_data.get('results', [])
-#     if results:
-#         first_item = results[0]
-#         return first_item.keys()
-#     else:
-#         return []
-
-# keys = list_keys(data) 
-# print(keys)
 
 def extrair_dados(json_data):
     results = json_data.get('results', [])
