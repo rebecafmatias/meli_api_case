@@ -1,38 +1,42 @@
 import requests
+import pandas as pd
 
-def fetch_data(produto):
+def request_api(produto):
     url = f"https://api.mercadolibre.com/sites/MLB/search?q={produto}"
     response = requests.get(url)
     return response.json()
 
-data = fetch_data("cofre")
+data = request_api("cofre")
 
+# def list_keys(json_data):
+#     results = json_data.get('results', [])
+#     if results:
+#         first_item = results[0]
+#         return first_item.keys()
+#     else:
+#         return []
 
-def list_keys(json_data):
-    results = json_data.get('results', [])
-    if results:
-        first_item = results[0]
-        return first_item.keys()
-    else:
-        return []
-
-keys = list_keys(data)
+# keys = list_keys(data) 
 # print(keys)
 
-
-def extract_data(json_data):
+def extrair_dados(json_data):
     results = json_data.get('results', [])
     extracted_data = []
     for item in results:
         extracted_data.append({
             'title': item.get('title', ''),
-            'seller': item.get('seller', ''),
+            'seller': item.get('seller', {}).get('id', ''),
+            'category_id': item.get('category_id', {}),
             'price': item.get('price', 0),
             'available_quantity': item.get('available_quantity', 0),
-            'original_price': item.get('original_price', 0)
+            'original_price': item.get('original_price') if item.get('original_price') is not None else item.get('price', 0)
         })
     return extracted_data
 
-products = extract_data(data)
 
-print(products)
+products = extrair_dados(data)
+
+# print(products)
+
+df = pd.DataFrame(products)
+df.to_csv('dados_meli.csv', index=False)
